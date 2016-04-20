@@ -20,6 +20,7 @@ var Queue = function() {
     for (var q in storage) {
       storage[num] = storage[q];
       delete storage[q];
+      num++;
     }
     last && last--;
     return dequeued;
