@@ -1,5 +1,7 @@
 var Stack = function() {
   var someInstance = Object.create(stackMethods);
+  // var someInstance = Object.create(Stack.prototype);
+
   someInstance.length = 0;
   someInstance.storage = {};
   return someInstance;
@@ -18,7 +20,6 @@ var Stack = function() {
 // Stack.prototype.size = function() {
 //   return this.length;
 // };
-
 
 var stackMethods = {
   
