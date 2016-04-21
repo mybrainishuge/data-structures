@@ -54,31 +54,3 @@ var Node = function(value) {
 /*
  * Complexity: What is the time complexity of the above functions?
  */
-
-
-/*
-var linkedList = {
-  head: {
-    value: 4,
-    next: {
-
-      value: 5,
-      next: {
-
-        value: 6,
-        next: {
-
-          value: 7,
-          next: {
-
-            value: 8,
-            next: null
-          }
-        }
-      }
-    }
-  },
-  tail: null  
-};
-
-linkedList.addToTail(9);*/
