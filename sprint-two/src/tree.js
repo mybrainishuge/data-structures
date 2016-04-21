@@ -21,48 +21,21 @@ treeMethods.contains = function(target) {
     return true;
   }
 
-  for (var child in this.children) {
-    if (child.value === target) {
+  for (var k in this.children) {
+    if (this.children[k].value === target) {
       return true;
     }
-    if (!Object.keys(child.children).length) {
-      return child.contains(target);
+    // debugger;
+    if (Object.keys(this.children[k].children).length) {
+      if (this.children[k].contains(target)) {
+        return true;
+      }
     }
   }
   return false;
 };
 
 
-
 /*
  * Complexity: What is the time complexity of the above functions?
  */
-
-/*
-  var tree = Tree();
-
-  tree = {
-    value: undefined,
-    children: {
-      0: {
-        value: 5,
-        children: {
-          0: {
-            value: 7,
-            children: {}
-          }
-        }
-      },
-
-      1: {
-        value: 6,
-        children: {
-          0: {
-            value: 8,
-            children: {}
-          }
-        }
-      }
-    },
-  }
-*/
