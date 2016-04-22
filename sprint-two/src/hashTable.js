@@ -2,6 +2,7 @@
 
 var HashTable = function() {
   this._limit = 8;
+  this._bucketCount = 0;
   this._storage = LimitedArray(this._limit);
 };
 
@@ -12,6 +13,8 @@ HashTable.prototype.insert = function(k, v) {
     bucket.push([k, v]);
   } else {
     this._storage.set(index, [[k, v]]);
+    this._bucketCount++;
+    //this.resize();
   }
 };
 
@@ -34,8 +37,20 @@ HashTable.prototype.remove = function(k) {
       bucket.splice(idx, 1);
     }
   });
+  if (!bucket.length) {
+    this._bucketCount--;
+    //this.resize();
+  }
 };
 
+Hashtable.prototype.resize = function(max) {
+  if (this._bucketCount / this._limit >= 0.75) {
+    this._limit *= 2;
+  }
+  if (this._bucketCount / this._limit <= 0.25) {
+    this._limit /= 2;
+  }
+};
 
 
 /*
@@ -45,5 +60,4 @@ HashTable.prototype.remove = function(k) {
  The `retrieve` method is linear.
  The `remove` method is linear.
  */
-
 
