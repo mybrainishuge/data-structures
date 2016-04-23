@@ -73,11 +73,15 @@ HashTable.prototype.resize = function() {
     var newLimit = this._limit *= 2;
     tempStorage = LimitedArray(newLimit); 
     this._storage.each(function(bucket) {
-      console.log(bucket);
+      // console.log(bucket);
       debugger;
       _.each(bucket, function(tuple) {
-        consle.log(getIndexBelowMaxForKey(tuple[0], newLimit));
-        tempStorage.set(getIndexBelowMaxForKey(tuple[0], newLimit), tuple);
+        var idx = getIndexBelowMaxForKey(tuple[0], newLimit);
+        // console.log(bucket);
+        // console.log(tuple);
+        // console.log(getIndexBelowMaxForKey(tuple[0], newLimit));
+        tempStorage.set(idx, tuple);
+        // console.log(tempStorage.get(idx));
         // hash = getIndexBelowMaxForKey(tuple[0], newLimit);
         // tempStorage[hash] = [tuple[0], tuple[1]];
       });
