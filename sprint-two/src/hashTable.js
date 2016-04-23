@@ -9,6 +9,9 @@ var HashTable = function() {
 
 HashTable.prototype.insert = function(k, v) {
   var index = getIndexBelowMaxForKey(k, this._limit);
+  if (index > this._limit) {
+    debugger;
+  }
   var bucket = this._storage.get(index);
   if (Array.isArray(bucket)) {
     bucket.push([k, v]);
@@ -33,27 +36,8 @@ HashTable.prototype.retrieve = function(k) {
 };
 
 HashTable.prototype.remove = function(k) {
-  // alert('removing ' + k);
   var index = getIndexBelowMaxForKey(k, this._limit);
-  // alert('current index: ' + index + '\ncurrent limit: ' + this._limit + '\ncurrent tuples: ' + this._tupleCount);
   var bucket = this._storage.get(index);
-  console.log(this._storage.get(0));
-  console.log(this._storage.get(1));
-  console.log(this._storage.get(2));
-  console.log(this._storage.get(3));
-  console.log(this._storage.get(4));
-  console.log(this._storage.get(5));
-  console.log(this._storage.get(6));
-  console.log(this._storage.get(7));
-  console.log(this._storage.get(8));
-  console.log(this._storage.get(9));
-  console.log(this._storage.get(10));
-  console.log(this._storage.get(11));
-  console.log(this._storage.get(12));
-  console.log(this._storage.get(13));
-  console.log(this._storage.get(14));
-  console.log(this._storage.get(15));
-  // debugger;
   bucket.forEach(function(tuple, idx) {
     if (tuple[0] === k) {
       bucket.splice(idx, 1);
@@ -68,22 +52,12 @@ HashTable.prototype.resize = function() {
   var tempStorage;
   //make it bigger
   if (this._tupleCount / this._limit >= 0.75) {
-    // alert('growing to' + this._limit * 2);
-    // this._resizing = true;
-    var newLimit = this._limit *= 2;
+    var newLimit = this._limit * 2;
     tempStorage = LimitedArray(newLimit); 
     this._storage.each(function(bucket) {
-      // console.log(bucket);
-      debugger;
       _.each(bucket, function(tuple) {
         var idx = getIndexBelowMaxForKey(tuple[0], newLimit);
-        // console.log(bucket);
-        // console.log(tuple);
-        // console.log(getIndexBelowMaxForKey(tuple[0], newLimit));
         tempStorage.set(idx, tuple);
-        // console.log(tempStorage.get(idx));
-        // hash = getIndexBelowMaxForKey(tuple[0], newLimit);
-        // tempStorage[hash] = [tuple[0], tuple[1]];
       });
     });
     this._limit *= 2;
@@ -91,8 +65,6 @@ HashTable.prototype.resize = function() {
   }
   // make it smaller 
   if (this._tupleCount / this._limit <= 0.25 && this.minLimit > this._limit / 2) {
-    // alert('halving to ' + this._limit / 2);
-    // this._resizing = true;
     this._limit /= 2;
     tempStorage = LimitedArray(this._limit);
     this._storage.each(function(bucket) {
@@ -102,9 +74,7 @@ HashTable.prototype.resize = function() {
     });
     this._storage = tempStorage;
   }
-  // this._resizing = false;
 };
-
 
 /*
  * Complexity: What is the time complexity of the above functions?
