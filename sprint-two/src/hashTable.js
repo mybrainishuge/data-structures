@@ -3,7 +3,6 @@ var HashTable = function() {
   this._limit = 8;
   this._tupleCount = 0;
   this._storage = LimitedArray(this._limit);
-  // this._resizing = false;
   this.minLimit = 4;
 };
 
@@ -26,7 +25,6 @@ HashTable.prototype.insert = function(k, v) {
 HashTable.prototype.retrieve = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
   var bucket = this._storage.get(index);
-  // debugger;
   return bucket.reduce(function(result, tuple) {
     if (tuple[0] === k) {
       return tuple[1];
@@ -61,17 +59,20 @@ HashTable.prototype.resize = function() {
       });
     });
     this._limit *= 2;
+    this.minLimit *= 2;
     this._storage = tempStorage;
   }
   // make it smaller 
   if (this._tupleCount / this._limit <= 0.25 && this.minLimit > this._limit / 2) {
-    this._limit /= 2;
-    tempStorage = LimitedArray(this._limit);
+    var newLimit = this._limit / 2;
+    tempStorage = LimitedArray(newLimit);
     this._storage.each(function(bucket) {
       _.each(bucket, function(tuple) {
-        tempStorage.set(getIndexBelowMaxForKey(tuple[0]), tuple[1]);
+        var idx = getIndexBelowMaxForKey(tuple[0], newLimit);
+        tempStorage.set(idx, tuple);
       });
     });
+    this._limit /= 2;
     this._storage = tempStorage;
   }
 };
