@@ -21,16 +21,12 @@ HashTable.prototype.insert = function(k, v) {
 HashTable.prototype.retrieve = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
   var bucket = this._storage.get(index);
-  if (bucket) {
-    return bucket.reduce(function(result, tuple) {
-      if (tuple[0] === k) {
-        return tuple[1];
-      }
-      return result;
-    }, undefined);
-  } else {
-    return undefined;
-  }
+  return bucket.reduce(function(result, tuple) {
+    if (tuple[0] === k) {
+      return tuple[1];
+    }
+    return result;
+  }, undefined);
 };
 
 HashTable.prototype.remove = function(k) {
