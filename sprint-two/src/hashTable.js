@@ -3,14 +3,10 @@ var HashTable = function() {
   this._limit = 8;
   this._tupleCount = 0;
   this._storage = LimitedArray(this._limit);
-  this.minLimit = 4;
 };
 
 HashTable.prototype.insert = function(k, v) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  if (index > this._limit) {
-    debugger;
-  }
   var bucket = this._storage.get(index);
   if (Array.isArray(bucket)) {
     bucket.push([k, v]);
@@ -25,24 +21,29 @@ HashTable.prototype.insert = function(k, v) {
 HashTable.prototype.retrieve = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
   var bucket = this._storage.get(index);
-  return bucket.reduce(function(result, tuple) {
-    if (tuple[0] === k) {
-      return tuple[1];
-    }
-    return result;
-  }, undefined);
+  if (bucket) {
+    return bucket.reduce(function(result, tuple) {
+      if (tuple[0] === k) {
+        return tuple[1];
+      }
+      return result;
+    }, undefined);
+  } else {
+    return undefined;
+  }
 };
 
 HashTable.prototype.remove = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
   var bucket = this._storage.get(index);
+  var cnt = this._tupleCount;
   bucket.forEach(function(tuple, idx) {
     if (tuple[0] === k) {
       bucket.splice(idx, 1);
-      this._tupleCount--;
+      cnt--;
     }
   });
-
+  this._tupleCount = cnt;
   this.resize();
 };
 
@@ -55,7 +56,7 @@ HashTable.prototype.resize = function() {
     this._storage.each(function(bucket) {
       _.each(bucket, function(tuple) {
         var idx = getIndexBelowMaxForKey(tuple[0], newLimit);
-        tempStorage.set(idx, tuple);
+        tempStorage.set(idx, [tuple]);
       });
     });
     this._limit *= 2;
@@ -63,17 +64,19 @@ HashTable.prototype.resize = function() {
     this._storage = tempStorage;
   }
   // make it smaller 
-  if (this._tupleCount / this._limit <= 0.25 && this.minLimit > this._limit / 2) {
-    var newLimit = this._limit / 2;
-    tempStorage = LimitedArray(newLimit);
-    this._storage.each(function(bucket) {
-      _.each(bucket, function(tuple) {
-        var idx = getIndexBelowMaxForKey(tuple[0], newLimit);
-        tempStorage.set(idx, tuple);
+  if (this._tupleCount / this._limit <= 0.25) {
+    if (this._limit > 8) {
+      var newLimit = this._limit / 2;
+      tempStorage = LimitedArray(newLimit);
+      this._storage.each(function(bucket) {
+        _.each(bucket, function(tuple) {
+          var idx = getIndexBelowMaxForKey(tuple[0], newLimit);
+          tempStorage.set(idx, [tuple]);
+        });
       });
-    });
-    this._limit /= 2;
-    this._storage = tempStorage;
+      this._limit = newLimit;
+      this._storage = tempStorage;
+    }
   }
 };
 
@@ -84,5 +87,3 @@ HashTable.prototype.resize = function() {
  The `retrieve` method is linear.
  The `remove` method is linear.
  */
-
-//var = 
